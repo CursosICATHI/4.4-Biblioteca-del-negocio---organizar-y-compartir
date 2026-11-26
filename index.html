@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteca del negocio: organizar, compartir y actualizar skills con seguridad</title>
+<style>
+
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Montserrat', sans-serif; background: #f0f2f5; color: #333; }
+    .slide { width: 100%; max-width: 1024px; margin: 20px auto; background: #fff; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.12); overflow: hidden; min-height: 500px; display: flex; flex-direction: column; }
+    .slide-header { background: #3d5a96; padding: 18px 30px; display: flex; align-items: center; justify-content: space-between; }
+    .slide-header h2 { color: #fff; font-size: 20px; font-weight: 700; }
+    .slide-header .num { color: rgba(255,255,255,0.6); font-size: 14px; }
+    .slide-body { padding: 30px; flex: 1; }
+    .slide-footer { background: #2e4575; padding: 10px 30px; display: flex; justify-content: space-between; color: rgba(255,255,255,0.7); font-size: 12px; }
+    .portada { min-height: 90vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; position: relative; overflow: hidden; }
+    .portada-bg { position: absolute; inset: 0; background: linear-gradient(135deg, #3d5a96 0%, #e8755c 50%, #d05a7e 100%); z-index: 0; }
+    .portada .franja1 { position: absolute; bottom: 0; left: 0; right: 0; height: 12px; background: #e8755c; z-index: 1; }
+    .portada .franja2 { position: absolute; top: 0; right: 0; width: 25%; height: 8%; background: #d05a7e; z-index: 1; }
+    .portada .franja3 { position: absolute; bottom: 0; left: 0; width: 10%; height: 18%; background: #d05a7e; z-index: 1; }
+    .portada .franja4 { position: absolute; bottom: 0; right: 0; width: 15%; height: 12%; background: #e8755c; z-index: 1; }
+    .portada-content { position: relative; z-index: 2; padding: 40px; }
+    .portada .campus { color: rgba(255,255,255,0.7); font-size: 13px; letter-spacing: 4px; font-weight: 700; margin-bottom: 40px; }
+    .portada h1 { color: #fff; font-size: 48px; font-weight: 900; line-height: 1.2; margin-bottom: 8px; text-shadow: 3px 3px 12px rgba(0,0,0,0.2); }
+    .portada h1 span { display: block; font-size: 32px; font-weight: 600; }
+    .portada .tema-label { color: rgba(255,255,255,0.85); font-size: 18px; margin-top: 50px; }
+    .portada .tema { color: #fff; font-size: 28px; font-weight: 700; margin-top: 8px; }
+    .portada .instituto { color: rgba(255,255,255,0.75); font-size: 15px; margin-top: 50px; }
+    .portada .fecha { color: rgba(255,255,255,0.55); font-size: 13px; margin-top: 10px; }
+    h3 { color: #3d5a96; font-size: 22px; margin-bottom: 20px; }
+    h4 { color: #3d5a96; font-size: 18px; margin-bottom: 12px; }
+    .block { background: #fdf4f0; border-left: 5px solid #e8755c; padding: 18px 20px; border-radius: 0 10px 10px 0; margin: 15px 0; }
+    .block-title { font-weight: 700; color: #e8755c; margin-bottom: 6px; }
+    .block-blue { background: #eff2f8; border-left: 5px solid #3d5a96; }
+    .block-blue .block-title { color: #3d5a96; }
+    .block-pink { background: #fdf0f4; border-left: 5px solid #d05a7e; }
+    .block-pink .block-title { color: #d05a7e; }
+    .block-vino { background: #fdf0f2; border-left: 5px solid #691b31; }
+    .block-vino .block-title { color: #691b31; }
+    ul, ol { padding-left: 22px; line-height: 2; }
+    li { margin-bottom: 4px; }
+    .columns { display: flex; gap: 30px; }
+    .columns > div { flex: 1; }
+    table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px 14px; text-align: left; }
+    th { background: #3d5a96; color: #fff; }
+    tr:nth-child(even) { background: #f8f9fc; }
+    .tag { display: inline-block; background: #3d5a96; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-right: 6px; }
+    .center { text-align: center; }
+    .final { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; text-align: center; }
+    .final h2 { color: #3d5a96; font-size: 32px; margin-bottom: 20px; }
+    .final p { color: #666; font-size: 18px; }
+    .nav-bar { max-width: 1024px; margin: 10px auto; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .nav-bar button { background: #3d5a96; color: #fff; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 13px; transition: all 0.2s; }
+    .nav-bar button:hover { background: #e8755c; transform: translateY(-2px); }
+    .nav-bar button.activo { background: #d05a7e; }
+    .nav-controls { max-width: 1024px; margin: 10px auto; display: flex; gap: 10px; justify-content: center; }
+    .nav-controls button { background: #3d5a96; color: #fff; border: none; padding: 10px 28px; border-radius: 25px; cursor: pointer; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 15px; transition: all 0.2s; }
+    .nav-controls button:hover { background: #e8755c; transform: scale(1.05); }
+    .counter { max-width: 1024px; margin: 5px auto; text-align: center; font-size: 13px; color: #888; }
+    @media (max-width: 768px) {
+        .portada h1 { font-size: 32px; }
+        .portada h1 span { font-size: 24px; }
+        .portada .tema { font-size: 20px; }
+        .columns { flex-direction: column; }
+        .slide-body { padding: 20px; }
+        .slide-header h2 { font-size: 16px; }
+    }
+
+</style>
+</head>
+<body>
+
+<div class="nav-controls">
+    <button onclick="ant()">&#9664; Anterior</button>
+    <button onclick="sig()">Siguiente &#9654;</button>
+</div>
+<div class="counter" id="counter"></div>
+
+<div id="slides-container"></div>
+
+<script>
+const PORTADA = {
+    "etiqueta": "Tema 4.4 — Unidad 4",
+    "tema": "Biblioteca del negocio:<br>organizar y compartir",
+    "instituto": "Instituto de Capacitación para el Trabajo del Estado de Hidalgo"
+};
+const slides = [
+    {
+        "tipo": "portada"
+    },
+    {
+        "titulo": "Índice",
+        "num": "2 / 33",
+        "body": "<div class=\"columns\"><div><strong style=\"color:#3d5a96;\">1. Organizar</strong><br>- Por qué una biblioteca<br>- Qué guardar<br>- Ficha<br>- Nombres<br><br><strong style=\"color:#3d5a96;\">2. Compartir</strong><br>- Control de acceso<br>- Repositorio<br>- Plugins</div><div><strong style=\"color:#3d5a96;\">3. Mantener</strong><br>- Ciclo de vida<br>- Revisar<br>- Actualizar<br>- Retirar<br><br><strong style=\"color:#3d5a96;\">4. Proteger</strong><br>- Seguridad<br>- Auditoría<br>- Roles<br><br><strong style=\"color:#3d5a96;\">5. Cerrar</strong><br>- Actividad y resumen</div></div>"
+    },
+    {
+        "titulo": "Objetivo de aprendizaje",
+        "num": "3 / 33",
+        "body": "<p style=\"font-size:17px;line-height:1.7;margin-bottom:12px;\">Al terminar podrás <strong>organizar tus skills y agentes en una biblioteca, compartirlos con seguridad y mantenerlos actualizados</strong>.</p><div class=\"block\"><div class=\"block-title\">Lo que sabrás hacer</div><ul style=\"font-size:16px;line-height:2.1;\"><li>Diseñar la estructura de tu biblioteca.</li><li>Documentar cada skill con una ficha.</li><li>Compartir sin exponer datos.</li><li>Revisar, actualizar y retirar versiones.</li></ul></div>"
+    },
+    {
+        "titulo": "Por qué una biblioteca",
+        "num": "4 / 33",
+        "body": "<p style=\"font-size:17px;line-height:1.7;margin-bottom:12px;\">Cuando tienes varias skills, necesitas saber <strong>cuál usar, quién la revisa y cuándo se actualizó</strong>.</p><div class=\"columns\"><div><div class=\"block block-pink\"><div class=\"block-title\">Sin biblioteca</div><ul style=\"font-size:16px;line-height:2.1;\"><li>Duplicados.</li><li>Versiones viejas.</li><li>Nadie sabe cuál usar.</li></ul></div></div><div><div class=\"block block-blue\"><div class=\"block-title\">Con biblioteca</div><ul style=\"font-size:16px;line-height:2.1;\"><li>Catálogo claro.</li><li>Responsables.</li><li>Historial.</li></ul></div></div></div>"
+    },
+    {
+        "titulo": "Qué guardar",
+        "num": "5 / 33",
+        "body": "<ul style=\"font-size:16px;line-height:2.1;\"><li>Skills propias.</li><li>Plantillas y ejemplos.</li><li>Instrucciones de uso.</li><li>Versiones anteriores.</li><li>Registro de cambios.</li></ul>"
+    },
+    {
+        "titulo": "Ficha de skill",
+        "num": "6 / 33",
+        "body": "<table style=\"font-size:14px;\"><tr><th>Campo</th><th>Contenido</th></tr><tr><td>Nombre</td><td>Identificador único</td></tr><tr><td>Propósito</td><td>Qué resuelve en una frase</td></tr><tr><td>Cuándo se usa</td><td>Descripción de activación</td></tr><tr><td>Responsable</td><td>Quién la revisa</td></tr><tr><td>Datos que toca</td><td>Públicos, internos o sensibles</td></tr><tr><td>Versión</td><td>Número y fecha</td></tr></table>"
+    },
+    {
+        "titulo": "Nombres y versiones",
+        "num": "7 / 33",
+        "body": "<ul style=\"font-size:16px;line-height:2.1;\"><li>Usa un nombre corto y descriptivo.</li><li>Sin espacios ni acentos en el identificador.</li><li>Añade versión: v1, v2, v3.</li><li>Guarda la fecha en el registro.</li><li>No reutilices nombres retirados.</li></ul>"
+    },
+    {
+        "titulo": "Estructura de carpetas",
+        "num": "8 / 33",
+        "body": "<table style=\"font-size:14px;\"><tr><th>Carpeta</th><th>Contenido</th></tr><tr><td>skills/</td><td>Skills activas</td></tr><tr><td>skills/_archivo/</td><td>Versiones retiradas</td></tr><tr><td>plantillas/</td><td>Documentos base</td></tr><tr><td>datos/</td><td>Listas y ejemplos</td></tr><tr><td>docs/</td><td>Fichas y registro</td></tr></table>"
+    },
+    {
+        "titulo": "Catálogo",
+        "num": "9 / 33",
+        "body": "<p style=\"font-size:17px;line-height:1.7;margin-bottom:12px;\">Un catálogo es una tabla con todas tus skills y su estado.</p><table style=\"font-size:14px;\"><tr><th>Skill</th><th>Propósito</th><th>Responsable</th><th>Versión</th></tr><tr><td>cotizacion</td><td>Cotizar productos</td><td>Ana</td><td>v3</td></tr><tr><td>respuestas</td><td>Contestar quejas</td><td>Luis</td><td>v2</td></tr><tr><td>publicaciones</td><td>Redes sociales</td><td>Ana</td><td>v1</td></tr></table>"
+    },
+    {
+        "titulo": "Cómo organizar",
+        "num": "10 / 33",
+        "body": "<ol style=\"font-size:16px;line-height:2.1;\"><li>Reúne lo que ya usas.</li><li>Agrupa por área o por tarea.</li><li>Elimina duplicados.</li><li>Documenta cada una.</li><li>Publica el catálogo al equipo.</li></ol>"
+    },
+    {
+        "titulo": "Cómo compartir",
+        "num": "11 / 33",
+        "body": "<ul style=\"font-size:16px;line-height:2.1;\"><li>En la carpeta del proyecto.</li><li>En un repositorio con control de versiones.</li><li>Como plugin para varias skills.</li><li>Con instrucciones de instalación.</li><li>Solo con personas autorizadas.</li></ul>"
+    },
+    {
+        "titulo": "Control de acceso",
+        "num": "12 / 33",
+        "body": "<table style=\"font-size:14px;\"><tr><th>Nivel</th><th>Quién</th><th>Qué puede</th></tr><tr><td>Administrador</td><td>Dueño o TI</td><td>Crear, editar, retirar</td></tr><tr><td>Editor</td><td>Responsable del área</td><td>Editar y probar</td></tr><tr><td>Usuario</td><td>Equipo</td><td>Usar y reportar</td></tr><tr><td>Externo</td><td>Nadie por defecto</td><td>Sin acceso</td></tr></table>"
+    },
+    {
+        "titulo": "Repositorio",
+        "num": "13 / 33",
+        "body": "<p style=\"font-size:17px;line-height:1.7;margin-bottom:12px;\">Un repositorio permite ver quién cambió qué y volver atrás.</p><ul style=\"font-size:16px;line-height:2.1;\"><li>Guardar el historial.</li><li>Revisar cambios antes de aprobar.</li><li>Etiquetar versiones.</li><li>Documentar el motivo del cambio.</li></ul>"
+    },
+    {
+        "titulo": "Plugins",
+        "num": "14 / 33",
+        "body": "<p style=\"font-size:17px;line-height:1.7;margin-bottom:12px;\">Un plugin agrupa skills, conectores y subagentes para un rol o un equipo.</p><ul style=\"font-size:16px;line-height:2.1;\"><li>Se instala una vez.</li><li>Se actualiza como paquete.</li><li>Debe estar firmado o ser de confianza.</li><li>Revisa qué permisos incluye.</li></ul>"
+    },
+    {
+        "titulo": "Documentación",
+        "num": "15 / 33",
+        "body": "<ul style=\"font-size:16px;line-height:2.1;\"><li>Qué hace la skill.</li><li>Cómo se instala.</li><li>Ejemplos de uso.</li><li>Limitaciones conocidas.</li><li>A quién contactar.</li></ul>"
+    },
+    {
+        "titulo": "Ciclo de vida",
+        "num": "16 / 33",
+        "body": "<div class=\"block block-blue center\" style=\"font-size:18px;\">Crear → Probar → Publicar → Revisar → Actualizar → Retirar</div><p style=\"font-size:15px;line-height:1.7;margin-bottom:12px;\">Cada etapa con un responsable y una fecha.</p>"
+    },
+    {
+        "titulo": "Revisar",
+        "num": "17 / 33",
+        "body": "<ul style=\"font-size:16px;line-height:2.1;\"><li>Cada trimestre.</li><li>Cuando cambie un precio o formato.</li><li>Cuando alguien reporte un error.</li><li>Cuando cambie la herramienta.</li><li>Antes de compartir con un cliente.</li></ul>"
+    },
+    {
+        "titulo": "Actualizar",
+        "num": "18 / 33",
+        "body": "<ol style=\"font-size:16px;line-height:2.1;\"><li>Copia la versión actual.</li><li>Haz el cambio.</li><li>Prueba tres casos.</li><li>Documenta la versión.</li><li>Avisa al equipo.</li></ol>"
+    },
+    {
+        "titulo": "Retirar",
+        "num": "19 / 33",
+        "body": "<p style=\"font-size:17px;line-height:1.7;margin-bottom:12px;\">Retirar no es borrar: es mover a archivo y dejar de recomendar.</p><ul style=\"font-size:16px;line-height:2.1;\"><li>Marca como obsoleta.</li><li>Explica por qué.</li><li>Sustituye por la nueva.</li><li>Conserva el historial.</li><li>Actualiza el catálogo.</li></ul>"
+    },
+    {
+        "titulo": "Seguridad",
+        "num": "20 / 33",
+        "body": "<div class=\"block block-vino\"><div class=\"block-title\">Regla</div>Una skill puede ejecutar código. Revisa siempre qué hace antes de instalarla o compartirla.</div><ul style=\"font-size:16px;line-height:2.1;\"><li>Sin contraseñas ni datos de clientes.</li><li>Revisa los scripts incluidos.</li><li>Limita las herramientas que puede usar.</li><li>Firma o verifica el origen.</li></ul>"
+    },
+    {
+        "titulo": "Auditoría",
+        "num": "21 / 33",
+        "body": "<table style=\"font-size:14px;\"><tr><th>Qué revisar</th><th>Frecuencia</th></tr><tr><td>Skills activas y versiones</td><td>Mensual</td></tr><tr><td>Permisos de cada skill</td><td>Trimestral</td></tr><tr><td>Datos incluidos</td><td>Antes de compartir</td></tr><tr><td>Uso y errores reportados</td><td>Mensual</td></tr></table>"
+    },
+    {
+        "titulo": "Roles",
+        "num": "22 / 33",
+        "body": "<table style=\"font-size:14px;\"><tr><th>Rol</th><th>Responsabilidad</th></tr><tr><td>Dueño del negocio</td><td>Aprueba qué se comparte</td></tr><tr><td>Responsable de skills</td><td>Mantiene el catálogo</td></tr><tr><td>Usuario</td><td>Usa y reporta</td></tr><tr><td>TI</td><td>Permisos y repositorio</td></tr></table>"
+    },
+    {
+        "titulo": "Capacitación",
+        "num": "23 / 33",
+        "body": "<ul style=\"font-size:16px;line-height:2.1;\"><li>Explica qué es una skill.</li><li>Muestra un caso real.</li><li>Comparte el catálogo.</li><li>Define a quién preguntar.</li><li>Revisa dudas frecuentes.</li></ul>"
+    },
+    {
+        "titulo": "Métricas",
+        "num": "24 / 33",
+        "body": "<ul style=\"font-size:16px;line-height:2.1;\"><li>Tiempo ahorrado por tarea.</li><li>Errores reportados.</li><li>Skills usadas con frecuencia.</li><li>Skills sin uso.</li><li>Versiones desactualizadas.</li></ul>"
+    },
+    {
+        "titulo": "Actividad",
+        "num": "25 / 33",
+        "body": "<p style=\"font-size:17px;line-height:1.7;margin-bottom:12px;\"><strong>Meta:</strong> crear el catálogo de skills de tu negocio.</p><ol style=\"font-size:16px;line-height:2.1;\"><li>Reúne las skills que ya usas.</li><li>Elimina duplicados.</li><li>Llena la ficha de cada una.</li><li>Asigna responsables.</li><li>Publica el catálogo.</li></ol><div class=\"block block-blue\"><div class=\"block-title\">Entregable</div>Catálogo en tabla y fichas de tres skills.</div>"
+    },
+    {
+        "titulo": "Rúbrica",
+        "num": "26 / 33",
+        "body": "<table style=\"font-size:14px;\"><tr><th>Criterio</th><th>Peso</th><th>Qué se observa</th></tr><tr><td>Organización</td><td>30%</td><td>Catálogo claro</td></tr><tr><td>Fichas</td><td>30%</td><td>Datos completos</td></tr><tr><td>Seguridad</td><td>25%</td><td>Sin datos sensibles</td></tr><tr><td>Mantenimiento</td><td>15%</td><td>Responsables definidos</td></tr></table>"
+    },
+    {
+        "titulo": "Resumen",
+        "num": "27 / 33",
+        "body": "<ul style=\"font-size:17px;line-height:2.1;\"><li>Una biblioteca evita duplicados y versiones viejas.</li><li>Cada skill tiene ficha y responsable.</li><li>Se comparte con control de acceso.</li><li>Se revisa y actualiza periódicamente.</li><li>La seguridad se revisa antes de compartir.</li></ul><div class=\"block center\" style=\"margin-top:15px;\"><div class=\"block-title\">Frase final</div><em>El conocimiento del negocio también se administra.</em></div>"
+    },
+    {
+        "titulo": "Autoevaluación",
+        "num": "28 / 33",
+        "body": "<ol style=\"font-size:17px;line-height:2.1;\"><li>¿Qué datos lleva la ficha de una skill?</li><li>¿Cómo compartes una skill con seguridad?</li><li>¿Qué significa retirar una skill?</li><li>¿Cada cuándo se revisan?</li><li>¿Qué debe revisar la auditoría?</li></ol>"
+    },
+    {
+        "titulo": "Glosario",
+        "num": "29 / 33",
+        "body": "<table style=\"font-size:14px;\"><tr><th>Término</th><th>Significado</th></tr><tr><td>Biblioteca</td><td>Conjunto organizado de skills.</td></tr><tr><td>Catálogo</td><td>Tabla con skills y responsables.</td></tr><tr><td>Versión</td><td>Copia identificada de una skill.</td></tr><tr><td>Retirar</td><td>Marcar como obsoleta sin borrar.</td></tr><tr><td>Auditoría</td><td>Revisión periódica de skills y permisos.</td></tr></table>"
+    },
+    {
+        "titulo": "Recursos",
+        "num": "30 / 33",
+        "body": "<div class=\"block block-blue\"><div class=\"block-title\">Buenas prácticas</div><ul style=\"font-size:16px;line-height:2.1;\"><li>agentskills.io</li><li>Repositorio de skills de Anthropic</li><li>Repositorio de skills de OpenAI</li><li>Documentación de plugins</li></ul></div>"
+    },
+    {
+        "titulo": "Consejos",
+        "num": "31 / 33",
+        "body": "<ul style=\"font-size:16px;line-height:2.1;\"><li>Empieza con tres skills.</li><li>Documenta mientras creas.</li><li>Prueba antes de compartir.</li><li>Revisa cada trimestre.</li><li>Retira sin miedo.</li></ul>"
+    },
+    {
+        "titulo": "Cierre de la unidad",
+        "num": "32 / 33",
+        "body": "<div class=\"block block-vino\"><div class=\"block-title\">Idea para llevarte</div>Una biblioteca de skills es la memoria operativa de tu negocio.</div><p style=\"font-size:16px;line-height:1.7;margin-bottom:12px;\">Con esta unidad cierras el curso: ya sabes crear la app, delegar tareas, usar agentes y enseñarles a repetir lo que funciona.</p>"
+    },
+    {
+        "titulo": "Gracias por su atención",
+        "num": "33 / 33",
+        "body": "<div class=\"final\">\n            <h2>¿Dudas o comentarios?</h2>\n            <p>Participa en el foro del tema</p>\n            <p style=\"margin-top:30px;color:#3d5a96;font-weight:700;\">ICATHI 4.0 — Agentes de AI para la automatización del trabajo</p>\n        </div>"
+    }
+];
+
+let actual = 0;
+
+function renderSlide(i) {
+    const s = slides[i];
+    const c = document.getElementById('slides-container');
+    if (s.tipo === 'portada') {
+        c.innerHTML = '<div class="slide portada">' +
+            '<div class="portada-bg"></div>' +
+            '<div class="franja1"></div><div class="franja2"></div><div class="franja3"></div><div class="franja4"></div>' +
+            '<div class="portada-content">' +
+            '<div class="campus">CAMPUS VIRTUAL</div>' +
+            '<h1>Agentes de AI<span>para la automatización del trabajo</span></h1>' +
+            '<div class="tema-label">' + PORTADA.etiqueta + '</div>' +
+            '<div class="tema">' + PORTADA.tema + '</div>' +
+            '<div class="instituto">' + PORTADA.instituto + '</div>' +
+            '<div class="fecha">2026</div>' +
+            '</div></div>';
+    } else {
+        c.innerHTML = '<div class="slide">' +
+            '<div class="slide-header"><h2>' + s.titulo + '</h2><span class="num">' + s.num + '</span></div>' +
+            '<div class="slide-body">' + s.body + '</div>' +
+            '<div class="slide-footer"><span>ICATHI 4.0</span><span>' + s.num + '</span></div>' +
+            '</div>';
+    }
+    document.getElementById('counter').textContent = 'Diapositiva ' + (i + 1) + ' de ' + slides.length;
+    document.querySelectorAll('.nav-bar button').forEach((b, idx) => {
+        b.classList.toggle('activo', idx === i);
+    });
+}
+
+function sig() {
+    if (actual < slides.length - 1) { actual++; renderSlide(actual); }
+}
+function ant() {
+    if (actual > 0) { actual--; renderSlide(actual); }
+}
+
+// Nav bar
+document.addEventListener('DOMContentLoaded', () => {
+    const nav = document.createElement('div');
+    nav.className = 'nav-bar';
+    slides.forEach((_, i) => {
+        const b = document.createElement('button');
+        b.textContent = i + 1;
+        b.onclick = () => { actual = i; renderSlide(i); };
+        nav.appendChild(b);
+    });
+    document.body.insertBefore(nav, document.querySelector('.nav-controls'));
+    renderSlide(0);
+});
+</script>
+
+</body>
+</html>
